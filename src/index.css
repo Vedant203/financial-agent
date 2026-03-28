@@ -1,0 +1,228 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400;500;700&display=swap');
+
+:root {
+  --bg-color: #09090b; /* OLED Charcoal */
+  --panel-bg: rgba(13, 13, 13, 0.65); /* Translucent layers */
+  --panel-border: rgba(255, 255, 255, 0.08); /* Frosted borders */
+  --text-primary: #ededed;
+  --text-secondary: #a1a1aa;
+  --text-muted: #52525b;
+  --accent-green: #22c55e;
+  --accent-red: #ef4444;
+  --accent-blue: #3b82f6;
+  --accent-yellow: #eab308;
+  --item-hover: rgba(255, 255, 255, 0.05);
+  --item-active-bg: rgba(255, 255, 255, 0.1);
+  --green-glow: rgba(34, 197, 94, 0.15);
+  --red-glow: rgba(239, 68, 68, 0.15);
+  
+  --font-sans: 'Inter', -apple-system, sans-serif;
+  --font-mono: 'Fira Code', Consolas, monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  overflow: hidden; 
+  /* Subtle underlying gradient map for depth */
+  background-image: radial-gradient(circle at 15% 50%, rgba(20, 20, 20, 1), #09090b 25%), radial-gradient(circle at 85% 30%, rgba(15, 20, 30, 0.5), #09090b 25%);
+}
+
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+}
+
+/* Glassmorphism Structural Panels */
+.terminal-panel {
+  background: var(--panel-bg);
+  backdrop-filter: blur(12px); /* Deep blur layer */
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--panel-border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 6px; /* Return slight curve for structural harmony */
+  box-shadow: 0 4px 24px -4px rgba(0, 0, 0, 0.5);
+}
+
+.panel-header {
+  background: rgba(9, 9, 11, 0.85); /* Dark solid roof */
+  border-bottom: 1px solid var(--panel-border);
+  padding: 8px 12px;
+  font-size: 0.70rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.panel-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 4px;
+}
+
+/* Typography Overrides */
+.mono {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: -0.02em;
+}
+
+.data-green { color: var(--accent-green); }
+.data-red { color: var(--accent-red); }
+
+/* V2 Watchlist Data Tables */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* Add grouping headers */
+.table-group-header {
+  background: rgba(25, 25, 30, 0.5);
+  padding: 4px 8px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--panel-border);
+  border-top: 1px solid var(--panel-border);
+}
+
+.data-table th {
+  text-align: right;
+  padding: 6px 8px;
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--panel-border);
+  font-weight: 500;
+  text-transform: uppercase;
+}
+.data-table th:first-child { text-align: left; }
+
+.data-table td {
+  padding: 6px 8px;
+  text-align: right;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  cursor: pointer;
+  transition: background 0.1s;
+  vertical-align: middle;
+}
+.data-table td:first-child { text-align: left; }
+.data-table tr:hover td { background: var(--item-hover); }
+.data-table tr.active td { background: rgba(59, 130, 246, 0.15); border-left: 2px solid var(--accent-blue); }
+
+/* Blinking Updates (200ms glow decay) */
+@keyframes flashGlowGreen {
+  0% { text-shadow: 0 0 10px var(--accent-green); color: #fff; background-color: var(--green-glow); }
+  100% { text-shadow: 0 0 0 transparent; color: var(--accent-green); background-color: transparent; }
+}
+@keyframes flashGlowRed {
+  0% { text-shadow: 0 0 10px var(--accent-red); color: #fff; background-color: var(--red-glow); }
+  100% { text-shadow: 0 0 0 transparent; color: var(--accent-red); background-color: transparent; }
+}
+.flash-up { animation: flashGlowGreen 0.4s ease-out; }
+.flash-down { animation: flashGlowRed 0.4s ease-out; }
+
+/* Grid Layout */
+.terminal-grid {
+  display: grid;
+  flex: 1;
+  grid-template-columns: 360px 1fr 340px;
+  grid-template-rows: 1fr 340px;
+  grid-template-areas:
+    "left  chart  right"
+    "left  bottom right";
+  gap: 8px;
+  padding: 8px;
+  background: transparent; 
+  height: calc(100vh - 35px);
+  overflow: hidden;
+}
+
+.panel-left        { grid-area: left; }
+.panel-center      { grid-area: chart; }
+.panel-center-bottom { grid-area: bottom; }
+.panel-right       { grid-area: right; }
+
+/* Top Ticker */
+.top-ticker {
+  background: rgba(9, 9, 11, 0.9);
+  border-bottom: 1px solid var(--panel-border);
+  padding: 8px 16px;
+  display: flex;
+  gap: 32px;
+  overflow-x: auto;
+  white-space: nowrap;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.5);
+  z-index: 10;
+}
+.top-ticker::-webkit-scrollbar { display: none; }
+.ticker-item {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+/* V2 Live Wire News Feed */
+.news-item {
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.news-item:hover { 
+  background: var(--item-hover); 
+  transform: translateX(4px);
+}
+.news-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+.news-headline {
+  font-size: 0.85rem;
+  line-height: 1.4;
+  color: var(--text-primary);
+  font-weight: 500; /* Inter 500 */
+}
+
+/* Sentiment Badges */
+.badge {
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  font-family: var(--font-mono);
+  box-shadow: 0 0 10px rgba(0,0,0,0.2);
+}
+.badge.bullish { background: rgba(34, 197, 94, 0.15); color: var(--accent-green); border: 1px solid rgba(34, 197, 94, 0.3); }
+.badge.bearish { background: rgba(239, 68, 68, 0.15); color: var(--accent-red); border: 1px solid rgba(239, 68, 68, 0.3); }
+.badge.macro { background: rgba(234, 179, 8, 0.15); color: var(--accent-yellow); border: 1px solid rgba(234, 179, 8, 0.3); }
