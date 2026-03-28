@@ -226,7 +226,14 @@ export default function DiscoveryDashboard() {
              <div style={{ display: 'flex', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
                  {/* Box 1: Sys Log */}
                  <div className="mono" style={{ flex: 1.2, padding: '8px 12px', borderRight: '1px solid rgba(255,255,255,0.05)', fontSize: '0.65rem', lineHeight: '1.6', color: 'var(--text-secondary)' }}>
-                     <div style={{ color: '#888', marginBottom: '4px', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '2px' }}>SERVER HEARTBEAT</div>
+                     <div style={{ display: 'flex', justifyContent: 'space-between', color: '#888', marginBottom: '4px', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '2px' }}>
+                       <span>SERVER HEARTBEAT</span>
+                       <div style={{ display: 'flex', gap: '8px', fontSize: '0.55rem' }}>
+                         <span style={{ color: 'var(--accent-green)' }}>● BULLISH</span>
+                         <span style={{ color: 'var(--accent-red)' }}>● BEARISH</span>
+                         <span style={{ color: 'var(--accent-blue)' }}>● INFO</span>
+                       </div>
+                     </div>
                      <span style={{ color: '#52525b' }}>[SYS] {lastUpdated?.toLocaleTimeString()}</span> - <span style={{ color: 'var(--text-primary)' }}>HEARTBEAT OK. DATA SYNCED.</span><br/>
                      <span style={{ color: '#52525b' }}>[SYS] {lastUpdated?.toLocaleTimeString()}</span> - {activeTicker} SELECTED V2 RENDER PROFILE. <br/>
                      {Math.abs(activeQuote?.changePercent || 0) > 1 && <><span style={{ color: 'var(--accent-yellow)' }}>[WARN]</span> - {activeTicker} EXCEEDS 1% VOLATILITY. <br/></>}
