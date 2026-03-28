@@ -78,10 +78,11 @@ export default function DiscoveryDashboard() {
        const q = quotes[ticker];
        if(!q) return null;
        const pos = q.change >= 0;
+       const cur = q.cur || '';
        return (
          <tr key={ticker} className={activeTicker === ticker ? 'active' : ''} onClick={() => setActiveTicker(ticker)}>
            <td style={{ color: activeTicker === ticker ? '#fff' : 'var(--text-primary)', fontWeight: 600 }}>{ticker.replace('=F', '').replace('=X', '')}</td>
-           <td>{ticker.includes('=X') ? q.price.toFixed(4) : q.price.toFixed(2)}</td>
+           <td className="mono">{cur}{ticker.includes('=X') ? q.price.toFixed(4) : q.price.toFixed(2)}</td>
            <td className={pos ? "data-green" : "data-red"}>{(pos?'+':'')+q.change.toFixed(2)}</td>
            <td className={pos ? "data-green" : "data-red"} style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '8px' }}>
              {(pos?'+':'')+q.changePercent.toFixed(2)}%
@@ -101,7 +102,7 @@ export default function DiscoveryDashboard() {
         {!loading && Object.values(quotes).map(q => (
           <div key={q.name} className="ticker-item">
             <span style={{ color: 'var(--text-secondary)' }}>{q.name}</span>
-            <span style={{ fontWeight: 600 }}>{q.price.toFixed(2)}</span>
+            <span style={{ fontWeight: 600 }}>{q.cur}{q.price.toFixed(2)}</span>
             <span className={q.change >= 0 ? "data-green" : "data-red"}>
               {q.change >= 0 ? '▲' : '▼'}{Math.abs(q.changePercent).toFixed(2)}%
             </span>
@@ -171,8 +172,8 @@ export default function DiscoveryDashboard() {
               </div>
             </div>
             <div style={{ display: 'flex', gap: '16px' }}>
-              <span className="mono">O: <span style={{ color: 'var(--text-primary)' }}>{activeQuote?.prevClose?.toFixed(2) || '---'}</span></span>
-              <span className="mono">L: <span className={isPos ? "data-green" : "data-red"}>{activeQuote?.price?.toFixed(2) || '---'}</span></span>
+              <span className="mono"><span style={{ color: '#555', fontSize: '0.55rem', marginRight: '4px' }}>OPEN</span> <span style={{ color: 'var(--text-primary)' }}>{activeQuote?.cur}{activeQuote?.prevClose?.toFixed(2) || '---'}</span></span>
+              <span className="mono"><span style={{ color: '#555', fontSize: '0.55rem', marginRight: '4px' }}>LAST PRICE</span> <span className={isPos ? "data-green" : "data-red"}>{activeQuote?.cur}{activeQuote?.price?.toFixed(2) || '---'}</span></span>
               {chartLoading && <span className="data-blue" style={{ fontSize: '0.6rem' }}>SYNC...</span>}
             </div>
           </div>
@@ -181,7 +182,9 @@ export default function DiscoveryDashboard() {
              
              {activeQuote && (
                <div style={{ position: 'absolute', top: 30, left: 30, zIndex: 0, opacity: 0.1, fontFamily: 'var(--font-mono)', fontSize: '3.5rem', fontWeight: 700, pointerEvents: 'none', letterSpacing: '0.05em' }}>
-                 {activeTicker} <br/> {activeQuote.price.toFixed(2)}
+                 {activeTicker} <br/> 
+                 <span style={{ fontSize: '1rem', display: 'block', color: 'var(--text-muted)', marginBottom: '4px' }}>CURRENT PRICE</span>
+                 {activeQuote.cur}{activeQuote.price.toFixed(2)}
                </div>
              )}
              

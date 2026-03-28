@@ -1,49 +1,48 @@
 import { useState, useEffect } from 'react';
 
 const TICKERS = {
-
-  // Japanese Equities
-  '^N225': 'Nikkei 225',
-  '7203.T': 'Toyota Motor',
-  '9984.T': 'SoftBank Grp',
-  '6758.T': 'Sony Group',
-  '8306.T': 'Mitsubishi UFJ',
-  '6501.T': 'Hitachi',
-  // Global Equities
-  '^GSPC': 'S&P 500',
-  '^DJI': 'Dow Jones',
-  '^IXIC': 'NASDAQ',
-  '^HSCE': 'Hang Seng',
-  'MSFT': 'Microsoft',
-  'TSM': 'TSMC',
-  // Futures
-  'NIY=F': 'Nikkei Futures',
-  'ES=F': 'S&P500 Futures',
-  'NQ=F': 'NASDAQ Futures',
-  'CL=F': 'Crude Oil WTI',
-  'BZ=F': 'Brent Crude',
-  'NG=F': 'Natural Gas',
-  'GC=F': 'Gold Futures',
-  'SI=F': 'Silver Futures',
-  'HG=F': 'Copper Futures',
-  // Government Bonds / Rates
-  '^TNX': 'US 10Y Yield',
-  '^TYX': 'US 30Y Yield',
-  '^IRX': 'US 3M T-Bill',
-  'ZB=F': 'US T-Bond Fut',
-  'ZN=F': 'US 10Y Fut',
+  // Japanese Equities (JPY)
+  '^N225': { name: 'Nikkei 225', cur: '¥' },
+  '7203.T': { name: 'Toyota Motor', cur: '¥' },
+  '9984.T': { name: 'SoftBank Grp', cur: '¥' },
+  '6758.T': { name: 'Sony Group', cur: '¥' },
+  '8306.T': { name: 'Mitsubishi UFJ', cur: '¥' },
+  '6501.T': { name: 'Hitachi', cur: '¥' },
+  // Global Equities (USD)
+  '^GSPC': { name: 'S&P 500', cur: '$' },
+  '^DJI': { name: 'Dow Jones', cur: '$' },
+  '^IXIC': { name: 'NASDAQ', cur: '$' },
+  '^HSCE': { name: 'Hang Seng', cur: 'HK$' },
+  'MSFT': { name: 'Microsoft', cur: '$' },
+  'TSM': { name: 'TSMC', cur: '$' },
+  // Futures (USD)
+  'NIY=F': { name: 'Nikkei Futures', cur: '¥' },
+  'ES=F': { name: 'S&P500 Futures', cur: '$' },
+  'NQ=F': { name: 'NASDAQ Futures', cur: '$' },
+  'CL=F': { name: 'Crude Oil WTI', cur: '$' },
+  'BZ=F': { name: 'Brent Crude', cur: '$' },
+  'NG=F': { name: 'Natural Gas', cur: '$' },
+  'GC=F': { name: 'Gold Futures', cur: '$' },
+  'SI=F': { name: 'Silver Futures', cur: '$' },
+  'HG=F': { name: 'Copper Futures', cur: '$' },
+  // Government Bonds / Rates (%)
+  '^TNX': { name: 'US 10Y Yield', cur: '%' },
+  '^TYX': { name: 'US 30Y Yield', cur: '%' },
+  '^IRX': { name: 'US 3M T-Bill', cur: '%' },
+  'ZB=F': { name: 'US T-Bond Fut', cur: '$' },
+  'ZN=F': { name: 'US 10Y Fut', cur: '$' },
   // FX
-  'JPY=X': 'USD/JPY',
-  'EURUSD=X': 'EUR/USD',
-  'GBPUSD=X': 'GBP/USD',
-  'AUDUSD=X': 'AUD/USD',
+  'JPY=X': { name: 'USD/JPY', cur: '¥' },
+  'EURUSD=X': { name: 'EUR/USD', cur: '$' },
+  'GBPUSD=X': { name: 'GBP/USD', cur: '$' },
+  'AUDUSD=X': { name: 'AUD/USD', cur: '$' },
   // Crypto
-  'BTC-USD': 'Bitcoin',
-  'ETH-USD': 'Ethereum',
-  'SOL-USD': 'Solana',
+  'BTC-USD': { name: 'Bitcoin', cur: '$' },
+  'ETH-USD': { name: 'Ethereum', cur: '$' },
+  'SOL-USD': { name: 'Solana', cur: '$' },
   // Volatility
-  '^VIX': 'VIX (Fear)',
-  '^VVIX': 'VIX of VIX',
+  '^VIX': { name: 'VIX Fear', cur: '' },
+  '^VVIX': { name: 'VIX of VIX', cur: '' },
 };
 
 export function useMarketData() {
@@ -131,7 +130,8 @@ export function useMarketData() {
            if (result && result.meta) {
              const meta = result.meta;
              quotesObj[t] = {
-               name: TICKERS[t],
+               name: TICKERS[t].name,
+               cur: TICKERS[t].cur,
                price: meta.regularMarketPrice,
                prevClose: meta.previousClose || meta.chartPreviousClose,
                change: meta.regularMarketPrice - (meta.previousClose || meta.chartPreviousClose),
