@@ -71,7 +71,6 @@ export default function DiscoveryDashboard() {
   };
 
   const activeQuote = quotes[activeTicker];
-  const activeHistory = historical[activeTicker] || [];
   const isPos = activeQuote?.change >= 0;
 
   const renderTableRows = (tickersArray) => {
