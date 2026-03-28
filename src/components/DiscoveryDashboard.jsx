@@ -34,9 +34,24 @@ const VOLATILITY  = ['^VIX', '^VVIX'];
 
 
 export default function DiscoveryDashboard() {
-  const { news, quotes, historical, loading, lastUpdated } = useMarketData();
+  const { news, quotes, historical, fetchChartData, loading, lastUpdated } = useMarketData();
   const [activeTicker, setActiveTicker] = useState('^N225');
+  const [range, setRange] = useState('1d');
+  const [activeHistory, setActiveHistory] = useState([]);
   const [elapsedMs, setElapsedMs] = useState(0);
+  const [chartLoading, setChartLoading] = useState(false);
+
+  // Fetch specific range data when ticker or range toggle occurs
+  useEffect(() => {
+    async function updateChart() {
+      setChartLoading(true);
+      const data = await fetchChartData(activeTicker, range);
+      setActiveHistory(data);
+      setChartLoading(false);
+    }
+    updateChart();
+  }, [activeTicker, range]);
+
 
   // Live elapsed timer for data freshness
   useEffect(() => {
@@ -142,13 +157,28 @@ export default function DiscoveryDashboard() {
         {/* Center Panel: Advanced Chart */}
         <div className="terminal-panel panel-center">
           <div className="panel-header">
-            <span>{activeQuote ? `${activeQuote.name} (${activeTicker}) - INTRADAY 5M` : 'CHART VIEW'}</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <span style={{ color: 'var(--text-primary)' }}>{activeQuote ? `${activeQuote.name}` : 'CHART VIEW'}</span>
+              <div className="range-selector">
+                {['1d', '5d', '1mo', '6mo', '1y', 'ytd'].map(r => (
+                  <button 
+                    key={r} 
+                    className={range === r ? 'active' : ''} 
+                    onClick={() => setRange(r)}
+                  >
+                    {r.toUpperCase()}
+                  </button>
+                ))}
+              </div>
+            </div>
             <div style={{ display: 'flex', gap: '16px' }}>
               <span className="mono">O: <span style={{ color: 'var(--text-primary)' }}>{activeQuote?.prevClose?.toFixed(2) || '---'}</span></span>
               <span className="mono">L: <span className={isPos ? "data-green" : "data-red"}>{activeQuote?.price?.toFixed(2) || '---'}</span></span>
+              {chartLoading && <span className="data-blue" style={{ fontSize: '0.6rem' }}>SYNC...</span>}
             </div>
           </div>
-          <div className="panel-content" style={{ position: 'relative', padding: '16px' }}>
+          <div className="panel-content" style={{ position: 'relative', padding: '16px', overflow: 'hidden' }}>
+
              
              {activeQuote && (
                <div style={{ position: 'absolute', top: 30, left: 30, zIndex: 0, opacity: 0.1, fontFamily: 'var(--font-mono)', fontSize: '3.5rem', fontWeight: 700, pointerEvents: 'none', letterSpacing: '0.05em' }}>

@@ -49,17 +49,45 @@ const TICKERS = {
 export function useMarketData() {
   const [news, setNews] = useState([]);
   const [quotes, setQuotes] = useState({});
-  const [historical, setHistorical] = useState({});
+  const [historical, setHistorical] = useState({}); // Stores 1d sparkline data
+  const [activeChart, setActiveChart] = useState([]); // Stores the selected range data
   const [loading, setLoading] = useState(true);
   const [lastUpdated, setLastUpdated] = useState(null);
+
+  // Fetch specific chart data for a ticker and range
+  const fetchChartData = async (ticker, range = '1d') => {
+    try {
+      let interval = '5m';
+      if (range === '5d') interval = '15m';
+      if (['1mo', '6mo', '1y', 'ytd', 'max'].includes(range)) interval = '1d';
+
+      const res = await fetch(`/api/yfinance/v8/finance/chart/${ticker}?range=${range}&interval=${interval}`);
+      const data = await res.json();
+      const result = data.chart?.result?.[0];
+      
+      if (result) {
+        const timestamps = result.timestamp || [];
+        const closePrices = result.indicators?.quote?.[0]?.close || [];
+        return timestamps.map((ts, i) => {
+          const date = new Date(ts * 1000);
+          const timeStr = range === '1d' 
+            ? date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+            : date.toLocaleDateString([], {month: 'short', day: 'numeric'});
+          return { time: timeStr, price: closePrices[i] };
+        }).filter(pt => pt.price !== null);
+      }
+    } catch (e) {
+      console.error("Chart fetch failed:", e);
+    }
+    return [];
+  };
 
   useEffect(() => {
     async function fetchData() {
       try {
         setLoading(true);
 
-        // The Yahoo API often caps search results at 10 or 15 items regardless of newsCount.
-        // We will execute 3 concurrent topic queries to guarantee we fetch enough volume (30+ items) to fill the dashboard.
+        // Concurrent topic News queries
         const searchTopics = ['business economy', 'finance markets', 'japan technology'];
         const fetchPromises = searchTopics.map(topic => 
            fetch(`/api/ynews/v1/finance/search?q=${encodeURIComponent(topic)}&quotesCount=0`)
@@ -72,7 +100,6 @@ export function useMarketData() {
           if (json.news) allRawNews = allRawNews.concat(json.news);
         }
 
-        // Deduplicate by UUID
         const seen = new Set();
         const uniqueNews = allRawNews.filter(n => {
            if (seen.has(n.uuid)) return false;
@@ -92,7 +119,11 @@ export function useMarketData() {
         const quotesObj = {};
         const histObj = {};
 
-        for (const t of Object.keys(TICKERS)) {
+        // Fetch standard 1D data for all tickers (for watchlist/sparklines)
+        const assetKeys = Object.keys(TICKERS);
+        const assetBatches = [];
+        // Sequential to avoid rate limits, but could be batched
+        for (const t of assetKeys) {
            const res = await fetch(`/api/yfinance/v8/finance/chart/${t}?range=1d&interval=5m`);
            const data = await res.json();
            const result = data.chart?.result?.[0];
@@ -109,13 +140,10 @@ export function useMarketData() {
              
              const timestamps = result.timestamp || [];
              const closePrices = result.indicators?.quote?.[0]?.close || [];
-             histObj[t] = timestamps.map((ts, i) => {
-               const date = new Date(ts * 1000);
-               return { 
-                 time: date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}), 
-                 price: closePrices[i] 
-               };
-             }).filter(pt => pt.price !== null);
+             histObj[t] = timestamps.map((ts, i) => ({
+               time: new Date(ts * 1000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+               price: closePrices[i] 
+             })).filter(pt => pt.price !== null);
            }
         }
         setQuotes(quotesObj);
@@ -130,10 +158,10 @@ export function useMarketData() {
     }
     
     fetchData();
-    // Refresh every 5 minutes (300,000ms)
     const interval = setInterval(fetchData, 300000);
     return () => clearInterval(interval);
   }, []);
 
-  return { news, quotes, historical, loading, lastUpdated };
+  return { news, quotes, historical, activeChart, fetchChartData, loading, lastUpdated };
 }
+

@@ -87,6 +87,40 @@ body {
 
 .data-green { color: var(--accent-green); }
 .data-red { color: var(--accent-red); }
+.data-blue { color: var(--accent-blue); }
+
+/* Range Selector Tabs */
+.range-selector {
+  display: flex;
+  background: rgba(0,0,0,0.3);
+  padding: 2px;
+  border-radius: 4px;
+  border: 1px solid var(--panel-border);
+}
+
+.range-selector button {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  font-weight: 700;
+  padding: 4px 8px;
+  cursor: pointer;
+  border-radius: 3px;
+  transition: all 0.15s;
+}
+
+.range-selector button:hover {
+  color: var(--text-primary);
+}
+
+.range-selector button.active {
+  background: var(--accent-blue);
+  color: #fff;
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.4);
+}
+
 
 /* V2 Watchlist Data Tables */
 .data-table {
