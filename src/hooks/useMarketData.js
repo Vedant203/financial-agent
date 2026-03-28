@@ -1,19 +1,49 @@
 import { useState, useEffect } from 'react';
 
-// Japanese Focus with Global Macro
 const TICKERS = {
+
+  // Japanese Equities
   '^N225': 'Nikkei 225',
-  'NIY=F': 'Nikkei Futures',
-  'JPY=X': 'USD/JPY Rate',
-  'BTC-USD': 'Bitcoin (BTC)',
-  'ETH-USD': 'Ethereum (ETH)',
   '7203.T': 'Toyota Motor',
   '9984.T': 'SoftBank Grp',
   '6758.T': 'Sony Group',
+  '8306.T': 'Mitsubishi UFJ',
+  '6501.T': 'Hitachi',
+  // Global Equities
   '^GSPC': 'S&P 500',
-  'GC=F': 'Gold Futures',
+  '^DJI': 'Dow Jones',
+  '^IXIC': 'NASDAQ',
+  '^HSCE': 'Hang Seng',
   'MSFT': 'Microsoft',
-  'TSM': 'TSMC'
+  'TSM': 'TSMC',
+  // Futures
+  'NIY=F': 'Nikkei Futures',
+  'ES=F': 'S&P500 Futures',
+  'NQ=F': 'NASDAQ Futures',
+  'CL=F': 'Crude Oil WTI',
+  'BZ=F': 'Brent Crude',
+  'NG=F': 'Natural Gas',
+  'GC=F': 'Gold Futures',
+  'SI=F': 'Silver Futures',
+  'HG=F': 'Copper Futures',
+  // Government Bonds / Rates
+  '^TNX': 'US 10Y Yield',
+  '^TYX': 'US 30Y Yield',
+  '^IRX': 'US 3M T-Bill',
+  'ZB=F': 'US T-Bond Fut',
+  'ZN=F': 'US 10Y Fut',
+  // FX
+  'JPY=X': 'USD/JPY',
+  'EURUSD=X': 'EUR/USD',
+  'GBPUSD=X': 'GBP/USD',
+  'AUDUSD=X': 'AUD/USD',
+  // Crypto
+  'BTC-USD': 'Bitcoin',
+  'ETH-USD': 'Ethereum',
+  'SOL-USD': 'Solana',
+  // Volatility
+  '^VIX': 'VIX (Fear)',
+  '^VVIX': 'VIX of VIX',
 };
 
 export function useMarketData() {

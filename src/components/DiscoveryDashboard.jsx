@@ -24,8 +24,14 @@ const getSentimentBadge = (titleText) => {
   return null;
 }
 
-const EQUITIES = ['^N225', '7203.T', '9984.T', '6758.T', '^GSPC', 'MSFT', 'TSM'];
-const FX_MACRO = ['NIY=F', 'JPY=X', 'GC=F', 'BTC-USD', 'ETH-USD'];
+const EQUITIES_JP = ['^N225', '7203.T', '9984.T', '6758.T', '8306.T', '6501.T'];
+const EQUITIES_GL = ['^GSPC', '^DJI', '^IXIC', '^HSCE', 'MSFT', 'TSM'];
+const FUTURES     = ['NIY=F', 'ES=F', 'NQ=F', 'CL=F', 'BZ=F', 'NG=F', 'GC=F', 'SI=F', 'HG=F'];
+const BONDS       = ['^TNX', '^TYX', '^IRX', 'ZB=F', 'ZN=F'];
+const FX          = ['JPY=X', 'EURUSD=X', 'GBPUSD=X', 'AUDUSD=X'];
+const CRYPTO      = ['BTC-USD', 'ETH-USD', 'SOL-USD'];
+const VOLATILITY  = ['^VIX', '^VVIX'];
+
 
 export default function DiscoveryDashboard() {
   const { news, quotes, historical, loading, lastUpdated } = useMarketData();
@@ -113,14 +119,25 @@ export default function DiscoveryDashboard() {
                 </tr>
               </thead>
               <tbody>
-                <tr><td colSpan="4" className="table-group-header">EQUITIES</td></tr>
-                {renderTableRows(EQUITIES)}
-                <tr><td colSpan="4" className="table-group-header">FX & MACRO</td></tr>
-                {renderTableRows(FX_MACRO)}
+                <tr><td colSpan="4" className="table-group-header">JP EQUITIES</td></tr>
+                {renderTableRows(EQUITIES_JP)}
+                <tr><td colSpan="4" className="table-group-header">GLOBAL EQUITIES</td></tr>
+                {renderTableRows(EQUITIES_GL)}
+                <tr><td colSpan="4" className="table-group-header">FUTURES</td></tr>
+                {renderTableRows(FUTURES)}
+                <tr><td colSpan="4" className="table-group-header">GOV BONDS & RATES</td></tr>
+                {renderTableRows(BONDS)}
+                <tr><td colSpan="4" className="table-group-header">FOREX</td></tr>
+                {renderTableRows(FX)}
+                <tr><td colSpan="4" className="table-group-header">CRYPTO</td></tr>
+                {renderTableRows(CRYPTO)}
+                <tr><td colSpan="4" className="table-group-header">VOLATILITY / VIX</td></tr>
+                {renderTableRows(VOLATILITY)}
               </tbody>
             </table>
           </div>
         </div>
+
 
         {/* Center Panel: Advanced Chart */}
         <div className="terminal-panel panel-center">
